@@ -4,40 +4,32 @@
 
 一个基于 Cloudflare Workers + D1 + R2 构建的**开源临时邮箱服务**，支持邮件接收、发送、转发、用户管理等完整功能。
 
-**当前版本：V4.8** - 新增单个邮件转发和收藏功能
+**当前版本：V5.2.1** - 引入 hono 优化后端架构，并且优化邮件验证码的解析
 
-`转发的地址需要在cloudflare Email Addresses中验证`
+`本邮箱服务支持接收邮件时自动创建对应的邮箱，便于api用户使用，减少worker调用，邮箱服务的转发目标邮箱地址需要在cloudflare Email Addresses中验证`
 
-📖 **[一键部署指南](docs/yijianbushu.md)** | 📬 **[Resend 发件配置](docs/resend.md)** | 📚 **[API 文档](docs/api.md)**
+📖 **[一键部署指南](docs/yijianbushu.md)** | 🤖 **[Github Action 部署指南](docs/action-deployment.md)** | 📬 **[Resend 发件配置](docs/resend.md)** | 📚 **[API 文档](docs/api.md)**
 
 ## 📸 项目展示
-### 体验地址： https://mailexhibit.dinging.top/
+### 体验地址： https://freemail.cq.de5.net
 
 ### 体验账号： guest
-### 体验密码： admin
+### 体验密码： guest
 ### 页面展示
 
-#### 登陆
-![登陆页面](pic/dlu.png)
 #### 首页
-![首页展示](pic/shouye.png)
+![首页展示](./pic/light/shouye.png)
 
-### 手机端生成与历史
-<div style="display: flex; gap: 20px; justify-content: center; margin: 20px 0;">
-  <img src="./pic/phone/shouye.png" alt="手机端生成邮箱" style="height: 400px;" />
-  <img src="./pic/phone/lishi.png" alt="手机端历史邮箱" style="height: 400px;" />
-</div>
+#### 所有邮箱
+![所有邮箱](./pic/light/suoyouyouxiang.png)
 
-### 单个邮箱页
+#### 用户管理
+![用户管理](./pic/light/yonghuguanli.png)
 
-![单个邮箱首页](./pic/v4/youxiang.png)
+#### 单个邮箱登录
+![单个邮箱登录](./pic/dange邮箱登录.png)
 
-### 全部邮箱预览
-![单个邮箱首页](./pic/v4/xiugaiquanju.png)
-![单个邮箱首页](./pic/v4/liebiao.png)
-
-
-#### [更多展示点击查看](docs/zhanshi.md)
+#### [浅色模式展示](docs/zhanshi-light.md) | [深色模式展示](docs/zhanshi-dark.md)
 
 ## 功能特性
 
@@ -54,43 +46,14 @@
 
 ## 版本历史
 
-<details>
-<summary><strong>V4.8</strong>（当前版本）- 邮件转发和收藏</summary>
-
-- 邮箱管理页面支持按转发/收藏状态筛选
-- 支持将指定邮箱转发到目标邮箱
-- 批量前缀转发可通过 `FORWARD_RULES` 环境变量配置
-</details>
-
-<details>
-<summary><strong>V4.5</strong> - 多域名发送配置</summary>
-
-- 支持为不同域名配置不同的 Resend API 密钥
-- 支持键值对、JSON、单密钥三种配置格式
-- 系统根据发件人域名自动选择 API 密钥
-</details>
-
-<details>
-<summary><strong>V4.0</strong> - 邮箱登录与全局管理</summary>
-
-- 支持邮箱地址单点登录
-- 全局邮箱管理功能，可限制单个邮箱登录
-- 邮箱搜索、随机人名生成、列表/卡片视图切换
-</details>
-
-<details>
-<summary><strong>V3.x</strong> - 用户管理与性能优化</summary>
-
-- V3.5：数据库查询优化、R2 存储完整 EML、移动端适配
-- V3.0：三层权限模型、用户管理后台、前端权限防护
-</details>
-
-<details>
-<summary><strong>V1.x ~ V2.x</strong> - 基础功能</summary>
-
-- V2.0：Resend 发件集成、邮箱置顶
-- V1.0：邮箱生成、邮件接收、验证码提取
-</details>
+| 版本 | 主要更新 |
+|------|----------|
+| **V5.2.0** | 引入 postal-mime 改进邮件解析 · 修复部分客户端中文乱码问题 |
+| **V5.1.0** | 邮箱别名规范化支持扩展，支持 `.` `+` `-` 三种分隔符切分 |
+| **V5.0** | 全新 UI · SVG 图标 · 深色模式 · 管理面板统计与布局优化 |
+| **V3.0** | 三层权限模型 · 用户管理后台 · R2 存储 EML |
+| **V2.0** | Resend 发件集成 · 邮箱置顶 |
+| **V1.0** | 邮箱生成 · 邮件接收 · 验证码提取 |
 
 ## 部署配置
 
@@ -188,6 +151,14 @@ wrangler d1 execute TEMP_MAIL_DB --command "SELECT * FROM mailboxes LIMIT 10"
 - **静态资源缓存**：更新后在 Cloudflare 控制台 Purge Everything，浏览器强制刷新
 - **R2/D1 费用**：有免费额度限制，建议定期清理过期邮件
 - **安全**：生产环境务必修改默认的 `ADMIN_PASSWORD` 和 `JWT_TOKEN`
+
+## 自动部署
+
+本项目支持 GitHub Actions 自动部署到 Cloudflare Workers。详细配置说明请参考 [自动部署指南](docs/action-deployment.md)。
+
+## 感谢贡献者
+
+感谢 [sarsanta](https://github.com/sarsanta) 贡献的 GitHub Actions 自动部署功能！
 
 ## Star History
 
